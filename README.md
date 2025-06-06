@@ -8,7 +8,9 @@
 - Train your own model on labeled data
 - Quick use through CLI
 
-
+## Usage
+--train to train the model
+--predict to run the model on an uncategorized CSV
 ## Requirements
 
 ```bash
