@@ -1,19 +1,31 @@
-from src.preprocess import preprocess_csv
-from src.trainmodel import train_classifier
-from src.categorize import categorize_transactions
+import argparse
+from src import preprocess, trainmodel, categorize
+import os
 
-train_file = "data/labeled/labeled_transactions.csv"
-model_file = "models/classifier.pkl"
-new_data = "data/raw/example_bank_statement.csv"
-output_file = "data/processed/categorized_transactions.csv"
+from config import TRAINING_DATA, MODEL_FILE, OUTPUT_FOLDER
+def main():
+    parser = argparse.ArgumentParser(description="Expense Categorizer")
+    parser.add_argument('--train', action='store_true', help='Train the model using labeled CSVs')
+    parser.add_argument('--predict', type=str, help="CSV file with new transactions to categorize")
+    args = parser.parse_args()
 
-print("Preprocessing training data...")
-train_df = preprocess_csv(train_file)
-train_df.to_csv(train_file, index=False)
+    if args.train:
+        print("Preprocessing and training the model...")
+        df = preprocess.preprocess_csv(TRAINING_DATA, is_training=True)
+        df.to_csv(TRAINING_DATA, index=False)
+        trainmodel.train_classifier(TRAINING_DATA, MODEL_FILE)
+    elif args.predict:
+        print(f"Preprocessing and predicting for: {args.predict}")
+        df = preprocess.preprocess_csv(args.predict, is_training=False)
+        df.to_csv(args.predict, index=False)
 
-print("Training model...")
-train_classifier(train_file, model_file)
+        output_path = os.path.join(OUTPUT_FOLDER, "categorized_output.csv")
+        categorize.categorize_transactions(args.predict, MODEL_FILE, output_path)
+        print(f"Done. Output saved to: {output_path}")
 
-print("Categorizing new transactions...")
-categorize_transactions(new_data, model_file, output_file)
-print("Categorization complete. Results saved to", output_file)
+    else:
+        parser.print_help()
+
+    
+if __name__ == "__main__":
+    main()
