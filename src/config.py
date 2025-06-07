@@ -1,3 +1,9 @@
-TRAINING_DATA = "data/labeled/labeled_transactions.csv"
-MODEL_FILE = "models/classifier.pkl"
-OUTPUT_FOLDER = "data/processed"
+import os
+
+BASE_DIR = os.path.dirname(os.path.abspath(__file__))
+
+
+TRAINING_DATA = os.path.join(BASE_DIR, "data", "labeled", "labeled_transactions.csv")
+RAW_DATA_FOLDER = os.path.join(BASE_DIR, "data, "raw")
+PROCESSED_DATA_FOLDER = os.path.join(BASE_DIR, "data", "processed")
+MODEL_FILE = os.path.join(BASE_DIR, "models", "classifier.pkl")
