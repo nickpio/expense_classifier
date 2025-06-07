@@ -1,0 +1,13 @@
+# Bytecode
+__pycache__/
+*.py[cod]
+
+# Environment files
+.env
+
+# Model files
+*.pkl
+
+# Data
+data/processed/
+data/raw/
