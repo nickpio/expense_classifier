@@ -1,9 +1,11 @@
 import streamlit as st
 import pandas as pd
 import os
+import matplotlib.pyplot as plt
 
 from src import preprocess, categorize
-from config import MODEL_FILE
+from config import MODEL_FILE, INCOME_CATEGORIES
+from src.trainmodel import retrain_model
 
 st.set_page_config(page_title="Expense Classifier", layout="wide")
 
@@ -28,11 +30,43 @@ if uploaded_file is not None:
     
     st.subheader("Categorized Transactions")
     st.dataframe(categorized_df, use_container_width=True)
+    st.subheader("Correct any wrong categories below:")
+    edited_df = st.data_editor(df, num_rows="dynamic", use_container_width=True)
+    if st.button("Save & retrain"):
+        labeled_path = os.path.join("data", "labeled", "corrections.csv")
 
+        if os.path.exists(labeled_path):
+            old_df = pd.read_csv(labeled_path)
+            edited_df = edited_df.rename(columns={"Predicted_Category": "Category"})
+            combined = pd.concat([old_df, edited_df], ignore_index=True)
+            combined.to_csv(labeled_path, index=False)
+        else:
+            edited_df.to_csv(labeled_path, index=False)
+        
+        st.success(f"Corrections saved to {labeled_path}")
+        st.info("Retraining model...")
+        retrain_model(labeled_path)
+    
     st.subheader("Spending breakdown by category")
-    category_totals = categorized_df.groupby('Predicted_Category')['Amount'].sum().sort_values()
+    category_totals = categorized_df.groupby('Predicted_Category')['amount'].sum().sort_values()
     st.bar_chart(category_totals)
 
+    spending_df = categorized_df[~categorized_df["Predicted_Category"].isin(INCOME_CATEGORIES)]
+    spending_totals = spending_df.groupby('Predicted_Category')['amount'].sum().abs().sort_values(ascending=False)
+
+    st.subheader("Spending distribution (excluding income)")
+
+    fig, ax = plt.subplots()
+    ax.pie(
+        spending_totals,
+        labels=spending_totals.index,
+        autopct="%1.1f%%",
+        startangle=90,
+        wedgeprops={"edgecolor": "white"}
+    )
+    ax.axis("equal")  # Equal aspect ratio ensures that pie is drawn as a circle.
+    st.pyplot(fig)
+    
     csv = categorized_df.to_csv(index=False).encode('utf-8')
     st.download_button(
         label="Download Categorized CSV",
