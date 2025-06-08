@@ -6,7 +6,7 @@ def categorize_transactions(input_file, model_file, output_file):
     df = pd.read_csv(input_file)
     model = joblib.load(model_file)
 
-    df['Cleaned_Description'] = df['Description'].apply(clean_desc)
+    df['Cleaned_Description'] = df['description'].apply(clean_desc)
     df['Predicted_Category'] = model.predict(df['Cleaned_Description'])
 
     df.to_csv(output_file, index=False)

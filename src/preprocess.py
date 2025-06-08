@@ -21,7 +21,7 @@ def preprocess_csv(filepath_or_df, is_training=True):
 
     df.columns = df.columns.str.strip()  # Clean column names
 
-    required_columns = ['Description', 'Amount']
+    required_columns = ['description', 'amount']
     if is_training:
         required_columns.append('Category')
 
@@ -29,6 +29,6 @@ def preprocess_csv(filepath_or_df, is_training=True):
         if col not in df.columns:
             raise ValueError(f"CSV must contain column: '{col}'")
 
-    df['Cleaned_Description'] = df['Description'].apply(clean_desc)
+    df['Cleaned_Description'] = df['description'].apply(clean_desc)
     return df
  
