@@ -8,14 +8,27 @@ def clean_desc(text):
     return text
 
 
-def preprocess_csv(filepath):
-    df = pd.read_csv(filepath)
-    df.columns = df.columns.str.strip()
+def preprocess_csv(filepath_or_df, is_training=True):
+    """
+    Preprocesses a CSV file or DataFrame.
+    - Cleans descriptions
+    - Validates required columns
+    """
+    if isinstance(filepath_or_df, str):
+        df = pd.read_csv(filepath_or_df)
+    else:
+        df = filepath_or_df.copy()
 
-    if 'Description' not in df.columns or 'Amount' not in df.columns:
-        raise ValueError("CSV must contain 'description' and 'Amount' columns")
+    df.columns = df.columns.str.strip()  # Clean column names
+
+    required_columns = ['Description', 'Amount']
+    if is_training:
+        required_columns.append('Category')
+
+    for col in required_columns:
+        if col not in df.columns:
+            raise ValueError(f"CSV must contain column: '{col}'")
 
     df['Cleaned_Description'] = df['Description'].apply(clean_desc)
-
     return df
  
