@@ -6,10 +6,10 @@
 
 - Classify raw transaction data into spending categories
 - Train your own model on labeled data
-- Quick use through CLI
+- Quick use through CLI or GUI through Streamlit
 
 ## Usage
---train to train the model
+--train to train the model\n
 --predict to run the model on an uncategorized CSV
 ## Requirements
 
