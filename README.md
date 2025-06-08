@@ -9,7 +9,7 @@
 - Quick use through CLI or GUI through Streamlit
 
 ## Usage
---train to train the model\n
+--train to train the model\
 --predict to run the model on an uncategorized CSV
 ## Requirements
 
