@@ -1,4 +1,8 @@
 import os
+from dotenv import load_dotenv
+load_dotenv()
+
+OPENAI_API_KEY = os.getenv("OPENAI_API_KEY") #for OpenAI API usage, if needed
 
 BASE_DIR = os.path.dirname(os.path.abspath(__file__))
 
