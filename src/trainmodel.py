@@ -2,7 +2,6 @@ import pandas as pd
 from src.preprocess import preprocess_csv
 from sklearn.pipeline import make_pipeline
 from sklearn.pipeline import Pipeline
-from sklearn.feature_extraction.text import CountVectorizer
 from sklearn.feature_extraction.text import TfidfVectorizer
 from sklearn.naive_bayes import MultinomialNB
 from sklearn.linear_model import LogisticRegression
@@ -57,7 +56,7 @@ def retrain_model(labeled_csv_path):
     )
 
     model = Pipeline([
-        ("vectorizer", CountVectorizer()),
+        ("vectorizer", TfidfVectorizer(ngram_range = (1, 2))),
         ("classifier", LogisticRegression(class_weight='balanced', max_iter=1000))
     ])
 
@@ -71,3 +70,12 @@ def retrain_model(labeled_csv_path):
     print(report)
 
     return model
+
+def retrain_model_from_all_labeled():
+    labeled_dir = "data/labeled"
+    all_files = [os.path.join(labeled_dir, f) for f in os.listdir(labeled_dir) if f.endswith(".csv")]
+
+    combined_df = pd.concat([pd.read_csv(f) for f in all_files], ignore_index=True)
+    combined_df = combined_df.drop_duplicates(subset=["description", "amount", "category"])
+
+    return retrain_model(combined_df)
