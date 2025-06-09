@@ -45,7 +45,7 @@ if uploaded_file is not None:
         
         st.success(f"Corrections saved to {labeled_path}")
         st.info("Retraining model...")
-        retrain_model(labeled_path)
+        retrain_model_from_all_labeled(labeled_path)
     
     st.subheader("Spending breakdown by category")
     category_totals = categorized_df.groupby('Predicted_Category')['amount'].sum().sort_values()
