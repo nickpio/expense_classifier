@@ -5,7 +5,7 @@ import matplotlib.pyplot as plt
 
 from src import preprocess, categorize
 from config import MODEL_FILE, INCOME_CATEGORIES
-from src.trainmodel import retrain_model
+from src.trainmodel import retrain_model_from_all_labeled
 
 st.set_page_config(page_title="Expense Classifier", layout="wide")
 
